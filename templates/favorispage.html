@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Favoris — HIDA.MAKEUP</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        /* =========================
+           GLOBAL RESETS & VARIABLES
+        ========================= */
+        :root {
+            --burgundy: #7d3638;
+            --burgundy-dark: #542527;
+            --rose: #f5e7e4;
+            --rose-light: #fbf5f3;
+            --text: #242020;
+            --muted: #77706e;
+            --border: #eee5e1;
+            --white: #ffffff;
+            --green: #2e7d32;
+            --footer-bg: #211b1b;
+            --footer-text: #aaa3a1;
+            --footer-border: #393232;
+            --shadow-sm: 0 4px 15px rgba(0,0,0,0.04);
+            --shadow-lg: 0 12px 30px rgba(0,0,0,0.08);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "DM Sans", sans-serif;
+            color: var(--text);
+            background: var(--rose-light);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .container {
+            width: min(1000px, calc(100% - 30px));
+            margin: auto;
+        }
+
+        /* =========================
+           TOP BAR
+        ========================= */
+        .topbar {
+            background: #5a2a2b;
+            color: var(--white);
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            padding: 12px 15px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* =========================
+           HEADER & NAVIGATION
+        ========================= */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.96);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+        }
+
+        .header-inner {
+            height: 76px;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            justify-self: center;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .logo span {
+            color: var(--burgundy);
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .nav a {
+            font-size: 13px;
+            font-weight: 600;
+            color: #514b49;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            color: var(--burgundy);
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .icon-btn {
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+            color: var(--text);
+            border-radius: 50%;
+            transition: background 0.2s ease, color 0.2s ease;
+            text-decoration: none;
+        }
+
+        .icon-btn:hover,
+        .icon-btn.active {
+            background: var(--rose);
+            color: var(--burgundy);
+        }
+
+        .cart-btn {
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -2px;
+            right: -3px;
+            background: var(--burgundy);
+            color: var(--white);
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        /* =========================
+           MOBILE MENU DRAWER
+        ========================= */
+        .mobile-menu {
+            position: fixed;
+            inset: 0;
+            background: var(--white);
+            z-index: 2000;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            padding: 25px;
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        .mobile-menu-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .mobile-links {
+            display: grid;
+            gap: 0;
+            margin-top: 20px;
+        }
+
+        .mobile-links a {
+            padding: 18px 0;
+            border-bottom: 1px solid var(--border);
+            font-family: "Playfair Display", serif;
+            font-size: 24px;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .close-btn {
+            border: 0;
+            background: var(--rose);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            color: var(--text);
+        }
+
+        /* =========================
+           WISHLIST HERO
+        ========================= */
+        .wishlist-hero {
+            background: linear-gradient(135deg, var(--rose) 0%, #fef8f6 100%);
+            padding: 40px 0;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .breadcrumb {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        .breadcrumb a {
+            color: var(--text);
+            transition: color 0.2s;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--burgundy);
+        }
+
+        .wishlist-hero h1 {
+            font-family: "Playfair Display", serif;
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--burgundy-dark);
+            margin-bottom: 6px;
+        }
+
+        .wishlist-count-badge {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        /* =========================
+           WISHLIST CONTENT & GRID (2 IN A LINE)
+        ========================= */
+        .wishlist-section {
+            padding: 40px 0 80px;
+            flex-grow: 1;
+        }
+
+        .wishlist-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .wishlist-toolbar-info {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .btn-add-all {
+            background: var(--burgundy);
+            color: var(--white);
+            border: none;
+            padding: 11px 22px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.25s ease, transform 0.2s ease;
+        }
+
+        .btn-add-all:hover {
+            background: var(--burgundy-dark);
+            transform: translateY(-2px);
+        }
+
+        /* 2 PRODUCTS IN LINE GRID */
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .wishlist-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .wishlist-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* UNFAVORITE HEART BUTTON */
+        .unfavorite-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            color: var(--burgundy);
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: all 0.25s ease;
+        }
+
+        .unfavorite-btn:hover {
+            background: #fef2f2;
+            color: #dc2626;
+            transform: scale(1.1);
+        }
+
+        .card-img-wrapper {
+            position: relative;
+            height: 260px;
+            background: var(--rose);
+            overflow: hidden;
+        }
+
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .wishlist-card:hover .card-img-wrapper img {
+            transform: scale(1.05);
+        }
+
+        .card-body {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-category {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .card-title {
+            font-family: "Playfair Display", serif;
+            font-size: 16px;
+            color: var(--text);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .card-stock {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--green);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+
+        .card-stock.out-stock {
+            color: #d97706;
+        }
+
+        .card-price {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--burgundy-dark);
+            margin-bottom: 15px;
+            margin-top: auto;
+        }
+
+        .btn-cart-single {
+            width: 100%;
+            background: var(--rose);
+            color: var(--burgundy);
+            border: 1px solid var(--border);
+            padding: 11px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-cart-single:hover {
+            background: var(--burgundy);
+            color: var(--white);
+            border-color: var(--burgundy);
+        }
+
+        /* =========================
+           EMPTY STATE
+        ========================= */
+        .empty-wishlist {
+            display: none;
+            text-align: center;
+            padding: 70px 20px;
+            background: var(--white);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--rose);
+            color: var(--burgundy);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 32px;
+            margin: 0 auto 20px;
+        }
+
+        .empty-wishlist h3 {
+            font-family: "Playfair Display", serif;
+            font-size: 26px;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .empty-wishlist p {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .btn-browse {
+            display: inline-block;
+            background: var(--burgundy);
+            color: var(--white);
+            padding: 13px 30px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: background 0.2s;
+        }
+
+        .btn-browse:hover {
+            background: var(--burgundy-dark);
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+        footer {
+            background: var(--footer-bg);
+            color: var(--white);
+            padding: 65px 0 25px;
+            margin-top: auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+            gap: 50px;
+            padding-bottom: 45px;
+        }
+
+        .footer-logo {
+            font-size: 19px;
+            letter-spacing: 3px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .footer-about {
+            color: var(--footer-text);
+            font-size: 12px;
+            line-height: 1.8;
+            max-width: 290px;
+        }
+
+        footer h4 {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.3px;
+            margin-bottom: 18px;
+        }
+
+        .footer-links {
+            display: grid;
+            gap: 10px;
+        }
+
+        .footer-links a {
+            color: var(--footer-text);
+            font-size: 12px;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+        }
+
+        .footer-contact {
+            color: var(--footer-text);
+            font-size: 12px;
+            line-height: 1.9;
+        }
+
+        .socials {
+            display: flex;
+            gap: 9px;
+            margin-top: 17px;
+        }
+
+        .socials a {
+            width: 35px;
+            height: 35px;
+            border: 1px solid #4a4240;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: 12px;
+            color: #ddd;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .socials a:hover {
+            background: var(--burgundy);
+            border-color: var(--burgundy);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--footer-border);
+            padding-top: 22px;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            color: #817977;
+            font-size: 10px;
+        }
+
+        /* =========================
+           RESPONSIVE MEDIA QUERIES
+        ========================= */
+        @media (max-width: 1000px) {
+            .nav {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: grid;
+            }
+
+            .header-inner {
+                grid-template-columns: 1fr auto 1fr;
+            }
+
+            .header-inner .mobile-menu-btn {
+                justify-self: start;
+            }
+
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: calc(100% - 20px);
+            }
+
+            /* MAINTAIN 2 IN A LINE ON MOBILE (BOUTIQUE STYLE) */
+            .wishlist-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .card-img-wrapper {
+                height: 170px;
+            }
+
+            .card-body {
+                padding: 12px;
+            }
+
+            .card-title {
+                font-size: 13px;
+            }
+
+            .card-price {
+                font-size: 15px;
+                margin-bottom: 10px;
+            }
+
+            .unfavorite-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 13px;
+                top: 8px;
+                right: 8px;
+            }
+
+            .btn-cart-single {
+                padding: 8px 4px;
+                font-size: 10px;
+            }
+
+            .wishlist-toolbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .btn-add-all {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 35px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <i class="fa-solid fa-truck-fast"></i> LIVRAISON PARTOUT AU MAROC | PAIEMENT À LA LIVRAISON
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="container header-inner">
+            <button class="icon-btn mobile-menu-btn" onclick="openMenu()" aria-label="Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <nav class="nav">
+                <a href="index.html">Accueil</a>
+                <a href="products.html">Boutique</a>
+                <a href="categories.html">Catégories</a>
+                <a href="about.html">À propos</a>
+            </nav>
+
+            <a href="index.html" class="logo">
+                HIDA<span>.</span>MAKEUP
+            </a>
+
+            <div class="header-actions">
+                <button class="icon-btn search-btn" aria-label="Rechercher">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+                <a href="wishlist.html" class="icon-btn active" aria-label="Favoris">
+                    <i class="fa-solid fa-heart" style="color: var(--burgundy);"></i>
+                </a>
+                <a href="cart.html" class="icon-btn cart-btn" aria-label="Panier">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-count" id="cartCount">2</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE MENU DRAWER -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-top">
+            <div class="logo">HIDA<span style="color:var(--burgundy)">.</span>MAKEUP</div>
+            <button class="close-btn" onclick="closeMenu()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <nav class="mobile-links">
+            <a href="index.html">Accueil</a>
+            <a href="products.html">Boutique</a>
+            <a href="categories.html">Catégories</a>
+            <a href="wishlist.html">Mes favoris</a>
+            <a href="about.html">À propos</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="wishlist-hero">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html">Accueil</a>
+                <i class="fa-solid fa-chevron-right" style="font-size: 9px;"></i>
+                <span>Mes Favoris</span>
+            </div>
+            <h1>Ma Liste d'Envies</h1>
+            <p class="wishlist-count-badge"><span id="itemsCount">4</span> article(s) sauvegardé(s)</p>
+        </div>
+    </section>
+
+    <!-- WISHLIST MAIN CONTENT -->
+    <section class="wishlist-section">
+        <div class="container">
+            
+            <!-- TOOLBAR -->
+            <div class="wishlist-toolbar" id="wishlistToolbar">
+                <div class="wishlist-toolbar-info">
+                    Retrouvez ici tous vos coups de cœur
+                </div>
+                <button class="btn-add-all" onclick="addAllToCart()">
+                    <i class="fa-solid fa-cart-plus"></i> Tout ajouter au panier
+                </button>
+            </div>
+
+            <!-- GRID ITEMS (2 IN A LINE) -->
+            <div class="wishlist-grid" id="wishlistGrid">
+                
+                <!-- PRODUCT 1 -->
+                <div class="wishlist-card">
+                    <button class="unfavorite-btn" title="Retirer des favoris" onclick="unfavoriteItem(this)">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=600&q=80" alt="Huile pour Lèvres Repulpante">
+                    </div>
+                    <div class="card-body">
+                        <span class="card-category">Lèvres</span>
+                        <h2 class="card-title">Huile pour Lèvres Repulpante Glow</h2>
+                        <div class="card-stock">
+                            <i class="fa-solid fa-circle-check"></i> En stock
+                        </div>
+                        <div class="card-price">180 DH</div>
+                        <button class="btn-cart-single" onclick="addToCartSingle(this)">
+                            <i class="fa-solid fa-bag-shopping"></i> Ajouter au panier
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PRODUCT 2 -->
+                <div class="wishlist-card">
+                    <button class="unfavorite-btn" title="Retirer des favoris" onclick="unfavoriteItem(this)">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=600&q=80" alt="Fond de Teint Lumineux Glow">
+                    </div>
+                    <div class="card-body">
+                        <span class="card-category">Teint</span>
+                        <h2 class="card-title">Fond de Teint Lumineux Radiant Finish</h2>
+                        <div class="card-stock">
+                            <i class="fa-solid fa-circle-check"></i> En stock
+                        </div>
+                        <div class="card-price">290 DH</div>
+                        <button class="btn-cart-single" onclick="addToCartSingle(this)">
+                            <i class="fa-solid fa-bag-shopping"></i> Ajouter au panier
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PRODUCT 3 -->
+                <div class="wishlist-card">
+                    <button class="unfavorite-btn" title="Retirer des favoris" onclick="unfavoriteItem(this)">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80" alt="Sérum Hydratant Acide Hyaluronique">
+                    </div>
+                    <div class="card-body">
+                        <span class="card-category">Skincare</span>
+                        <h2 class="card-title">Sérum Hydratant Acide Hyaluronique</h2>
+                        <div class="card-stock">
+                            <i class="fa-solid fa-circle-check"></i> En stock
+                        </div>
+                        <div class="card-price">240 DH</div>
+                        <button class="btn-cart-single" onclick="addToCartSingle(this)">
+                            <i class="fa-solid fa-bag-shopping"></i> Ajouter au panier
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PRODUCT 4 -->
+                <div class="wishlist-card">
+                    <button class="unfavorite-btn" title="Retirer des favoris" onclick="unfavoriteItem(this)">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                    <div class="card-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1583241801142-113b9f5bbde5?auto=format&fit=crop&w=600&q=80" alt="Palette Nude Eyes">
+                    </div>
+                    <div class="card-body">
+                        <span class="card-category">Yeux</span>
+                        <h2 class="card-title">Palette Fards à Paupières Nude Eyes</h2>
+                        <div class="card-stock out-stock">
+                            <i class="fa-solid fa-clock"></i> Stock limité
+                        </div>
+                        <div class="card-price">350 DH</div>
+                        <button class="btn-cart-single" onclick="addToCartSingle(this)">
+                            <i class="fa-solid fa-bag-shopping"></i> Ajouter au panier
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- EMPTY STATE -->
+            <div class="empty-wishlist" id="emptyState">
+                <div class="empty-icon">
+                    <i class="fa-regular fa-heart"></i>
+                </div>
+                <h3>Votre liste d'envies est vide</h3>
+                <p>Explorez notre catalogue et enregistrez vos coups de cœur en cliquant sur le cœur.</p>
+                <a href="products.html" class="btn-browse">Découvrir la boutique</a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-logo">HIDA.MAKEUP</div>
+                    <p class="footer-about">
+                        Votre destination beauté au Maroc.
+                        Maquillage, skincare, parfums et essentiels
+                        sélectionnés pour vous.
+                    </p>
+                    <div class="socials">
+                        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="https://wa.me/212620283725" target="_blank" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                        <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4>Boutique</h4>
+                    <div class="footer-links">
+                        <a href="products.html">Tous les produits</a>
+                        <a href="categories.html">Maquillage</a>
+                        <a href="categories.html">Skincare</a>
+                        <a href="categories.html">Lèvres</a>
+                        <a href="categories.html">Parfums</a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4>Informations</h4>
+                    <div class="footer-links">
+                        <a href="about.html">À propos</a>
+                        <a href="contact.html">Contact</a>
+                        <a href="faq.html">FAQ</a>
+                        <a href="delivery.html">Livraison</a>
+                        <a href="privacy.html">Confidentialité</a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4>Contact</h4>
+                    <div class="footer-contact">
+                        <div>Mohammedia, Maroc</div>
+                        <div>+212 620 28 37 25</div>
+                        <div>contact@hidamakeup.ma</div>
+                        <div>WhatsApp disponible 7j/7</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <span>© 2026 HIDA.MAKEUP — Tous droits réservés.</span>
+                <span>Made with ♥ in Morocco</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // Drawer Menu Mobile
+        function openMenu() {
+            document.getElementById("mobileMenu").classList.add("active");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeMenu() {
+            document.getElementById("mobileMenu").classList.remove("active");
+            document.body.style.overflow = "";
+        }
+
+        let totalCartCount = 2;
+
+        // Unfavorite (Remove item) with Heart Animation
+        function unfavoriteItem(btn) {
+            const heartIcon = btn.querySelector('i');
+            heartIcon.className = 'fa-regular fa-heart';
+            btn.style.color = '#bbb';
+            
+            const card = btn.closest('.wishlist-card');
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.85)';
+            card.style.transition = 'all 0.3s ease';
+
+            setTimeout(() => {
+                card.remove();
+                updateWishlistState();
+            }, 300);
+        }
+
+        // Add single item to cart
+        function addToCartSingle(btn) {
+            totalCartCount++;
+            document.getElementById('cartCount').innerText = totalCartCount;
+            
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Ajouté !';
+            btn.style.background = 'var(--burgundy)';
+            btn.style.color = 'var(--white)';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = '';
+                btn.style.color = '';
+            }, 1800);
+        }
+
+        // Add all items to cart
+        function addAllToCart() {
+            const cards = document.querySelectorAll('.wishlist-card');
+            if (cards.length === 0) return;
+
+            totalCartCount += cards.length;
+            document.getElementById('cartCount').innerText = totalCartCount;
+
+            const btn = document.querySelector('.btn-add-all');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Tous les articles ont été ajoutés !';
+            btn.style.background = '#2e7d32';
+
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fa-solid fa-cart-plus"></i> Tout ajouter au panier';
+                btn.style.background = '';
+            }, 2000);
+        }
+
+        // Update counts and empty state UI
+        function updateWishlistState() {
+            const cards = document.querySelectorAll('.wishlist-card');
+            const countSpan = document.getElementById('itemsCount');
+            const toolbar = document.getElementById('wishlistToolbar');
+            const emptyState = document.getElementById('emptyState');
+            const grid = document.getElementById('wishlistGrid');
+
+            countSpan.innerText = cards.length;
+
+            if (cards.length === 0) {
+                toolbar.style.display = 'none';
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+/* ==========================================================================
+   HIDA.MAKEUP - RTL (RIGHT-TO-LEFT) STYLESHEET
+   Supports Arabic language presentation when activated
+   ========================================================================== */
+
+[dir="rtl"] {
+    direction: rtl;
+    text-align: right;
+}
+
+[dir="rtl"] body {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+}
+
+[dir="rtl"] .topbar i {
+    margin-right: 0;
+    margin-left: 6px;
+}
+
+[dir="rtl"] .header-actions {
+    justify-content: flex-start;
+}
+
+[dir="rtl"] .cart-count {
+    right: auto;
+    left: 2px;
+}
+
+[dir="rtl"] .product-badge {
+    left: auto;
+    right: 12px;
+}
+
+[dir="rtl"] .product-fav-btn {
+    right: auto;
+    left: 12px;
+}
+
+[dir="rtl"] .footer-links a:hover {
+    transform: translateX(-4px);
+}
+
+[dir="rtl"] .whatsapp-float {
+    left: auto;
+    right: 25px;
+}
+
+[dir="rtl"] .search-input-wrap i {
+    left: auto;
+    right: 18px;
+}
+
+[dir="rtl"] .search-input-wrap input {
+    padding: 14px 45px 14px 20px;
+}
+
+[dir="rtl"] .mobile-menu {
+    transform: translateX(100%);
+}
+
+[dir="rtl"] .mobile-menu.active {
+    transform: translateX(0);
+}
+
+[dir="rtl"] .toast {
+    border-left: none;
+    border-right: 4px solid var(--green);
+}

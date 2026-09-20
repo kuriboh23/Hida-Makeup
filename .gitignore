@@ -1,0 +1,37 @@
+# ==========================================================
+# HIDA.MAKEUP - .gitignore
+# ==========================================================
+
+# ---- Sensitive Config (DB credentials, store secrets) ----
+includes/config.php
+
+# ---- Database dumps (generated locally) ----
+# Uncomment if you don't want to commit the SQL schema:
+# database/
+
+# ---- PHP / Server cache ----
+*.log
+*.tmp
+*.bak
+error_log
+
+# ---- XAMPP / Local server specific ----
+.htaccess.bak
+
+# ---- OS & Editor junk ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- VSCode / JetBrains / Cursor ----
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ---- Node modules (if ever added) ----
+node_modules/
+
+# ---- Build artifacts ----
+dist/
+build/
