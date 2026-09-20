@@ -12,50 +12,42 @@ $is_ajax = isset($_GET['ajax']) && $_GET['ajax'] == '1';
 
 // Handle Toggle Action (Add/Remove from wishlist)
 if ($action === 'toggle' && $product_id > 0) {
-    $added = false;
+    $added = favorites_toggle($product_id);
 
-    if (!isset($_SESSION['favorites'])) {
-        $_SESSION['favorites'] = [];
-    }
-
-    $key = array_search($product_id, $_SESSION['favorites'], true);
-    if ($key !== false) {
-        // Remove
-        unset($_SESSION['favorites'][$key]);
-        $_SESSION['favorites'] = array_values($_SESSION['favorites']);
-        $added = false;
-        set_flash('info', "Produit retiré de vos favoris.");
-    } else {
-        // Add
-        $_SESSION['favorites'][] = $product_id;
-        $added = true;
-        set_flash('success', "Produit ajouté à vos favoris !");
-    }
-
+    // Async path: answer with JSON and leave no flash behind, so the toast is
+    // never shown twice on the next page load.
     if ($is_ajax) {
-        header('Content-Type: application/json');
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode([
             'status' => 'success',
             'added' => $added,
-            'total_count' => count($_SESSION['favorites'])
+            'total_count' => get_wishlist_count(),
         ]);
         exit;
     }
 
-    $redirect = $_SERVER['HTTP_REFERER'] ?? 'favorites.php';
+    set_flash($added ? 'success' : 'info', $added ? "Produit ajouté à vos favoris !" : "Produit retiré de vos favoris.");
+
+    // Only bounce back to our own site - never an open redirect.
+    $redirect = 'favorites.php';
+    $referer = $_SERVER['HTTP_REFERER'] ?? '';
+    if ($referer !== '' && str_starts_with($referer, BASE_URL)) {
+        $redirect = $referer;
+    }
+
     header("Location: $redirect");
     exit;
 }
 
 if ($action === 'clear') {
-    $_SESSION['favorites'] = [];
+    favorites_clear();
     set_flash('info', "Votre liste de favoris a été vidée.");
     header("Location: favorites.php");
     exit;
 }
 
 // Fetch favorite products from DB
-$fav_ids = $_SESSION['favorites'] ?? [];
+$fav_ids = favorites_read();
 $favorite_products = [];
 
 if (!empty($fav_ids)) {
@@ -78,17 +70,21 @@ require_once __DIR__ . '/includes/header.php';
 ?>
 
 <!-- WISHLIST HERO -->
-<section class="wishlist-hero">
+<section class="page-hero">
     <div class="container">
-        <div class="breadcrumb" style="justify-content:center;">
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
             <a href="index.php">Accueil</a>
             <span>/</span>
             <a href="products.php">Boutique</a>
             <span>/</span>
             <strong>Mes Favoris</strong>
-        </div>
+        </nav>
+
         <h1>Mes Coups de Cœur</h1>
-        <p class="wishlist-subtitle">Retrouvez tous les produits que vous avez enregistrés pour votre future commande.</p>
+
+        <p class="page-hero-desc">
+            Retrouvez tous les produits que vous avez enregistrés pour votre future commande.
+        </p>
     </div>
 </section>
 
@@ -106,6 +102,7 @@ require_once __DIR__ . '/includes/header.php';
 
         <div class="products-grid">
             <?php foreach ($favorite_products as $product): ?>
+                <?php $product_image = product_image_url($product['main_image'], (string)$product['slug'], (int)$product['id']); ?>
                 <article class="product-card">
                     <div class="product-img-wrap">
                         <?php if (!empty($product['badge'])): ?>
@@ -117,7 +114,7 @@ require_once __DIR__ . '/includes/header.php';
                         </a>
 
                         <a href="product.php?slug=<?= urlencode($product['slug']) ?>">
-                            <img src="<?= htmlspecialchars($product['main_image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" loading="lazy">
+                            <img src="<?= htmlspecialchars($product_image) ?>" alt="<?= htmlspecialchars($product['name']) ?>" loading="lazy">
                         </a>
                     </div>
 
@@ -145,7 +142,7 @@ require_once __DIR__ . '/includes/header.php';
                                 <?php endif; ?>
                             </div>
 
-                            <a href="cart.php?action=add&id=<?= $product['id'] ?>" class="add-cart-btn" title="Ajouter au panier">
+                            <a href="cart.php?action=add&id=<?= $product['id'] ?>" class="add-cart-btn" data-id="<?= $product['id'] ?>" title="Ajouter au panier">
                                 <i class="fa-solid fa-bag-shopping"></i>
                             </a>
                         </div>
@@ -165,7 +162,7 @@ require_once __DIR__ . '/includes/header.php';
             <p>
                 Vous n'avez pas encore de produits sauvegardés. Cliquez sur l'icône en forme de cœur sur vos articles préférés pour les retrouver ici en un clin d'œil.
             </p>
-            <div style="margin-top: 25px;">
+            <div class="empty-actions">
                 <a href="products.php" class="btn btn-primary btn-lg">
                     Découvrir notre boutique <i class="fa-solid fa-arrow-right"></i>
                 </a>
@@ -175,19 +172,4 @@ require_once __DIR__ . '/includes/header.php';
     <?php endif; ?>
 </div>
 
-<?php
-$extra_css = '
-.wishlist-hero { background: linear-gradient(135deg, var(--rose) 0%, #fef8f6 100%); padding: 45px 0 35px; text-align: center; border-bottom: 1px solid var(--border); }
-.wishlist-hero h1 { font-family: var(--font-heading); font-size: clamp(28px, 4vw, 38px); margin-bottom: 8px; color: var(--burgundy-dark); }
-.wishlist-subtitle { font-size: 14px; color: var(--muted); max-width: 500px; margin: 0 auto; }
-
-.wishlist-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
-.wishlist-count-text { font-size: 14px; color: var(--muted); }
-
-.empty-wishlist-card { max-width: 550px; margin: 40px auto; padding: 60px 30px; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); text-align: center; box-shadow: var(--shadow-sm); }
-.empty-fav-icon { width: 80px; height: 80px; border-radius: 50%; background: var(--rose); color: var(--burgundy); display: grid; place-items: center; font-size: 32px; margin: 0 auto 20px; }
-.empty-wishlist-card h2 { font-family: var(--font-heading); font-size: 26px; margin-bottom: 12px; }
-.empty-wishlist-card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
-';
-
-require_once __DIR__ . '/includes/footer.php';
+<?php require_once __DIR__ . '/includes/footer.php';

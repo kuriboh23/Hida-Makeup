@@ -6,10 +6,6 @@
 
 require_once __DIR__ . '/includes/db.php';
 
-// Fetch all active categories (ordered by display_order)
-$stmt = $pdo->query("SELECT * FROM categories ORDER BY display_order ASC");
-$categories = $stmt->fetchAll();
-
 // Fetch Best-Sellers & Featured products (limit 8, same logic as template shows 4+)
 $stmt = $pdo->query("
     SELECT p.*, c.name AS category_name, c.slug AS category_slug
@@ -82,38 +78,6 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 
     <!-- ================================
-         CATEGORIES SECTION
-    ================================ -->
-    <section class="section">
-        <div class="container">
-            <div class="section-head">
-                <div>
-                    <span class="section-tag">COLLECTION</span>
-                    <h2 class="section-title">Shoppez par catégorie</h2>
-                    <p class="section-subtitle">Trouvez rapidement ce qui vous fait envie.</p>
-                </div>
-                <a href="<?= BASE_PATH ?>category.php" class="see-all">
-                    Voir tout <i class="fa-solid fa-arrow-right"></i>
-                </a>
-            </div>
-
-            <div class="category-grid">
-                <?php foreach ($categories as $cat): ?>
-                    <a href="<?= BASE_PATH ?>category.php?slug=<?= urlencode($cat['slug']) ?>" class="category">
-                        <div class="category-image">
-                            <img src="<?= htmlspecialchars($cat['image']) ?>"
-                                 alt="<?= htmlspecialchars($cat['name']) ?>"
-                                 loading="lazy">
-                        </div>
-                        <div class="category-name"><?= htmlspecialchars($cat['name']) ?></div>
-                        <div class="category-count">Découvrir</div>
-                    </a>
-                <?php endforeach; ?>
-            </div>
-        </div>
-    </section>
-
-    <!-- ================================
          BEST SELLERS SECTION
     ================================ -->
     <section class="section products-section" id="best-sellers" style="background: #fff;">
@@ -129,46 +93,60 @@ require_once __DIR__ . '/includes/header.php';
                 </a>
             </div>
 
-            <div class="product-grid">
+            <div class="products-grid">
                 <?php foreach ($best_sellers as $product):
                     $is_fav = is_in_wishlist($product['id']);
+                    $product_image = product_image_url($product['main_image'], (string)$product['slug'], (int)$product['id']);
                 ?>
                     <article class="product-card">
-                        <div class="product-image">
+                        <div class="product-img-wrap">
                             <?php if (!empty($product['badge'])): ?>
-                                <span class="product-tag"><?= htmlspecialchars($product['badge']) ?></span>
+                                <span class="product-badge"><?= htmlspecialchars($product['badge']) ?></span>
                             <?php endif; ?>
 
-                            <button class="product-fav-btn heart <?= $is_fav ? 'active' : '' ?>"
+                            <button class="product-fav-btn <?= $is_fav ? 'active' : '' ?>"
                                     data-id="<?= $product['id'] ?>"
                                     aria-label="Ajouter aux favoris">
                                 <i class="fa-<?= $is_fav ? 'solid' : 'regular' ?> fa-heart"></i>
                             </button>
 
                             <a href="<?= BASE_PATH ?>product.php?slug=<?= urlencode($product['slug']) ?>">
-                                <img src="<?= htmlspecialchars($product['main_image']) ?>"
+                                <img src="<?= htmlspecialchars($product_image) ?>"
                                      alt="<?= htmlspecialchars($product['name']) ?>"
                                      loading="lazy">
-                            </a>
-
-                            <a href="<?= BASE_PATH ?>cart.php?action=add&id=<?= $product['id'] ?>"
-                               class="add-to-cart-panel"
-                               title="Ajouter au panier">
-                                <i class="fa-solid fa-plus"></i>
                             </a>
                         </div>
 
                         <div class="product-info">
-                            <div class="product-brand"><?= htmlspecialchars($product['category_name']) ?></div>
-                            <a href="<?= BASE_PATH ?>product.php?slug=<?= urlencode($product['slug']) ?>"
-                               class="product-name">
-                                <?= htmlspecialchars($product['name']) ?>
-                            </a>
-                            <div class="product-price">
-                                <?= format_price($product['price']) ?>
-                                <?php if (!empty($product['original_price']) && $product['original_price'] > $product['price']): ?>
-                                    <span class="old-price"><?= format_price($product['original_price']) ?></span>
-                                <?php endif; ?>
+                            <div class="product-cat"><?= htmlspecialchars($product['category_name']) ?></div>
+                            <h3 class="product-title">
+                                <a href="<?= BASE_PATH ?>product.php?slug=<?= urlencode($product['slug']) ?>">
+                                    <?= htmlspecialchars($product['name']) ?>
+                                </a>
+                            </h3>
+
+                            <div class="product-meta">
+                                <div class="product-stars">
+                                    <i class="fa-solid fa-star"></i>
+                                    <span><?= number_format((float)$product['rating'], 1) ?></span>
+                                </div>
+                                <span>(<?= (int)$product['reviews_count'] ?> avis)</span>
+                            </div>
+
+                            <div class="product-bottom">
+                                <div class="price-box">
+                                    <span class="price-current"><?= format_price($product['price']) ?></span>
+                                    <?php if (!empty($product['original_price']) && $product['original_price'] > $product['price']): ?>
+                                        <span class="price-old"><?= format_price($product['original_price']) ?></span>
+                                    <?php endif; ?>
+                                </div>
+
+                                <a href="<?= BASE_PATH ?>cart.php?action=add&id=<?= $product['id'] ?>"
+                                   class="add-cart-btn"
+                                   data-id="<?= $product['id'] ?>"
+                                   title="Ajouter au panier">
+                                    <i class="fa-solid fa-bag-shopping"></i>
+                                </a>
                             </div>
                         </div>
                     </article>

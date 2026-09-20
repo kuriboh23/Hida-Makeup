@@ -263,6 +263,17 @@ header {
     border: 2px solid var(--white);
 }
 
+/* Playful confirmation when the header counter changes */
+.cart-count.bump {
+    animation: countBump 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes countBump {
+    0% { transform: scale(1); }
+    45% { transform: scale(1.45); }
+    100% { transform: scale(1); }
+}
+
 .mobile-menu-btn {
     display: none;
 }
@@ -524,23 +535,37 @@ header {
 /* =========================================
    8. HERO BANNERS & BREADCRUMB
    ========================================= */
-.breadcrumb-bar {
-    background: var(--bg-light);
-    padding: 14px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
-}
-
 .breadcrumb {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
+    gap: 4px 8px;
+    font-size: 12.5px;
+    line-height: 1.5;
     color: var(--muted);
-    font-size: 13px;
+}
+
+.breadcrumb a {
+    color: var(--muted);
+    white-space: nowrap;
 }
 
 .breadcrumb a:hover {
     color: var(--burgundy);
+}
+
+.breadcrumb span {
+    color: var(--border-dark);
+}
+
+.breadcrumb strong {
+    min-width: 0;
+    max-width: 48ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text);
+    font-weight: 600;
 }
 
 .hero {
@@ -653,187 +678,46 @@ header {
     text-underline-offset: 4px;
 }
 
-.shop-header,
-.category-hero,
-.cart-hero-bar,
-.checkout-hero,
-.wishlist-hero {
+/* Shared inner-page hero — breadcrumb, title and intro share one left-aligned axis */
+.page-hero {
     background: linear-gradient(135deg, var(--rose) 0%, #fef8f6 100%);
-    padding: 45px 0 35px;
-    text-align: center;
     border-bottom: 1px solid var(--border);
-    margin-bottom: 30px;
+    padding: 26px 0 30px;
+    margin-bottom: 35px;
+    text-align: left;
 }
 
-.shop-header h1,
-.category-hero h1,
-.cart-hero-bar h1,
-.checkout-hero h1,
-.wishlist-hero h1 {
+.page-hero .breadcrumb {
+    margin-bottom: 14px;
+}
+
+.page-hero h1 {
     font-family: var(--font-heading);
-    font-size: clamp(28px, 4vw, 40px);
+    font-size: clamp(26px, 3.4vw, 38px);
+    line-height: 1.15;
     color: var(--burgundy-dark);
-    margin-bottom: 8px;
 }
 
-.category-desc,
-.wishlist-subtitle {
+.page-hero-desc {
     color: var(--muted);
     font-size: 14px;
-    max-width: 600px;
-    margin: 0 auto 20px;
     line-height: 1.6;
+    max-width: 620px;
+    margin-top: 8px;
+}
+
+/* Compact variant used when the hero only carries a breadcrumb */
+.page-hero.breadcrumb-only {
+    padding: 16px 0;
+    margin-bottom: 0;
+}
+
+.page-hero.breadcrumb-only .breadcrumb {
+    margin-bottom: 0;
 }
 
 /* =========================================
-   9. CATEGORIES (HOMEPAGE & ARCHIVE)
-   ========================================= */
-.category-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 20px;
-}
-
-.category {
-    text-align: center;
-    display: block;
-}
-
-.category-image {
-    aspect-ratio: 1;
-    border-radius: 50%;
-    overflow: hidden;
-    background: var(--rose-light);
-    margin-bottom: 12px;
-    border: 1px solid var(--border);
-}
-
-.category-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.4s ease;
-}
-
-.category:hover img {
-    transform: scale(1.08);
-}
-
-.category-name {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text);
-}
-
-.category-count {
-    color: var(--muted);
-    font-size: 11px;
-    margin-top: 2px;
-}
-
-.category-pills {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.cat-pill {
-    padding: 9px 18px;
-    border-radius: var(--radius-full);
-    font-size: 13px;
-    font-weight: 600;
-    background: var(--white);
-    color: var(--text-light);
-    border: 1px solid var(--border);
-    transition: var(--transition);
-}
-
-.cat-pill:hover,
-.cat-pill.active {
-    background: var(--burgundy);
-    color: var(--white);
-    border-color: var(--burgundy);
-}
-
-.cat-overview-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-}
-
-.cat-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: var(--transition);
-}
-
-.cat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--border-dark);
-}
-
-.cat-card-img {
-    position: relative;
-    aspect-ratio: 16 / 10;
-    overflow: hidden;
-    background: var(--rose-light);
-}
-
-.cat-card-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.cat-card:hover .cat-card-img img {
-    transform: scale(1.06);
-}
-
-.cat-count-badge {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: rgba(0,0,0,0.65);
-    color: white;
-    padding: 4px 10px;
-    border-radius: var(--radius-full);
-    font-size: 11px;
-    font-weight: 600;
-    backdrop-filter: blur(4px);
-}
-
-.cat-card-body {
-    padding: 22px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-
-.cat-card-body h3 {
-    font-family: var(--font-heading);
-    font-size: 20px;
-    color: var(--text);
-    margin-bottom: 8px;
-}
-
-.cat-card-body p {
-    font-size: 13px;
-    color: var(--muted);
-    line-height: 1.6;
-    margin-bottom: 20px;
-    flex-grow: 1;
-}
-
-/* =========================================
-   10. PRODUCT CARDS & GRID
+   9. PRODUCT CARDS & GRID
    ========================================= */
 .products-grid,
 .product-grid {
@@ -859,29 +743,25 @@ header {
     border-color: var(--border-dark);
 }
 
-.product-img-wrap,
-.product-image {
+.product-img-wrap {
     position: relative;
-    aspect-ratio: 0.86;
+    aspect-ratio: 1 / 1;
     background: var(--rose-light);
     overflow: hidden;
 }
 
-.product-img-wrap img,
-.product-image img {
+.product-img-wrap img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.4s ease;
 }
 
-.product-card:hover .product-img-wrap img,
-.product-card:hover .product-image img {
+.product-card:hover .product-img-wrap img {
     transform: scale(1.05);
 }
 
-.product-badge,
-.product-tag {
+.product-badge {
     position: absolute;
     top: 12px;
     left: 12px;
@@ -897,8 +777,7 @@ header {
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-.product-fav-btn,
-.heart {
+.product-fav-btn {
     position: absolute;
     top: 12px;
     right: 12px;
@@ -917,36 +796,9 @@ header {
 }
 
 .product-fav-btn:hover,
-.product-fav-btn.active,
-.heart:hover,
-.heart.active {
+.product-fav-btn.active {
     color: var(--burgundy);
     background: var(--white);
-    transform: scale(1.1);
-}
-
-.add-to-cart-panel {
-    position: absolute;
-    bottom: 12px;
-    right: 12px;
-    background: white;
-    color: var(--burgundy);
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-    cursor: pointer;
-    z-index: 10;
-    transition: var(--transition);
-    text-decoration: none;
-}
-
-.add-to-cart-panel:hover {
-    background: var(--burgundy);
-    color: white;
     transform: scale(1.1);
 }
 
@@ -957,7 +809,6 @@ header {
     flex-grow: 1;
 }
 
-.product-brand,
 .product-cat {
     color: var(--muted);
     font-size: 11px;
@@ -967,8 +818,7 @@ header {
     font-weight: 600;
 }
 
-.product-title,
-.product-name {
+.product-title {
     font-size: 14px;
     font-weight: 600;
     line-height: 1.4;
@@ -1010,8 +860,7 @@ header {
     border-top: 1px solid var(--border);
 }
 
-.price-box,
-.product-price {
+.price-box {
     display: flex;
     align-items: baseline;
     gap: 8px;
@@ -1026,8 +875,7 @@ header {
     color: var(--burgundy);
 }
 
-.price-old,
-.old-price {
+.price-old {
     font-size: 12px;
     color: var(--muted);
     text-decoration: line-through;
@@ -1052,8 +900,15 @@ header {
     transform: scale(1.08);
 }
 
+/* Shown while an async add to cart request is in flight */
+.add-cart-btn.is-loading,
+.btn.is-loading {
+    opacity: 0.65;
+    pointer-events: none;
+}
+
 /* =========================================
-   11. SECTION HEADERS & UTILITIES
+   10. SECTION HEADERS & UTILITIES
    ========================================= */
 .section {
     padding: 70px 0;
@@ -1107,7 +962,7 @@ header {
 }
 
 /* =========================================
-   12. ROUTINE & TRUST & WHATSAPP BOX
+   11. ROUTINE & TRUST & WHATSAPP BOX
    ========================================= */
 .routine {
     background: var(--rose-light);
@@ -1286,8 +1141,61 @@ header {
 }
 
 /* =========================================
-   13. SHOP LAYOUT & FILTERS
+   12. SHOP LAYOUT & FILTERS
    ========================================= */
+/* Boutique search bar - lives in the page hero so it is always reachable */
+.shop-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 620px;
+    margin-top: 22px;
+    padding: 6px 6px 6px 20px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-sm);
+}
+
+.shop-search > i {
+    flex-shrink: 0;
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.shop-search input[type="search"] {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 0;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    color: var(--text);
+}
+
+.shop-search input[type="search"]::placeholder {
+    color: var(--muted);
+}
+
+.shop-search-btn {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-full);
+    background: var(--burgundy);
+    color: var(--white);
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.shop-search-btn:hover {
+    background: var(--burgundy-dark);
+    transform: translateX(2px);
+}
+
 .shop-layout {
     display: grid;
     grid-template-columns: 260px 1fr;
@@ -1425,13 +1333,20 @@ header {
 }
 
 /* =========================================
-   14. PRODUCT DETAILS PAGE
+   13. PRODUCT DETAILS PAGE
    ========================================= */
 .product-grid-layout {
     display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: 60px;
+    grid-template-columns: minmax(0, 430px) minmax(0, 1fr);
+    gap: 55px;
     align-items: start;
+}
+
+/* Gallery is capped so the product photo never dominates the page */
+.product-gallery {
+    display: flex;
+    flex-direction: column;
+    max-width: 430px;
 }
 
 .main-image-wrap {
@@ -1694,7 +1609,7 @@ header {
 }
 
 /* =========================================
-   15. SHOPPING CART PAGE
+   14. SHOPPING CART PAGE
    ========================================= */
 .shipping-threshold-card {
     background: var(--white);
@@ -1740,21 +1655,37 @@ header {
 
 .cart-layout {
     display: grid;
-    grid-template-columns: 1fr 360px;
+    grid-template-columns: minmax(0, 1fr) 360px;
     gap: 40px;
     align-items: start;
 }
 
-.cart-table-head {
+/* Header and rows share one column template so every label sits on its column */
+.cart-table-head,
+.cart-item-row {
     display: grid;
-    grid-template-columns: 2.5fr 1fr 1fr 1fr;
+    grid-template-columns: minmax(0, 2.4fr) 0.9fr 0.9fr 1fr 44px;
+    align-items: center;
+    gap: 18px;
+}
+
+.cart-table-head {
     padding-bottom: 15px;
     border-bottom: 2px solid var(--border);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     color: var(--muted);
-    letter-spacing: 0.5px;
+    letter-spacing: 0.6px;
+}
+
+.cart-table-head > div:nth-child(3) {
+    text-align: center;
+}
+
+.cart-table-head > div:nth-child(4),
+.cart-table-head > div:nth-child(5) {
+    text-align: right;
 }
 
 .cart-items-list {
@@ -1763,10 +1694,7 @@ header {
 }
 
 .cart-item-row {
-    display: grid;
-    grid-template-columns: 2.5fr 1fr 1fr 1fr;
-    align-items: center;
-    padding: 22px 0;
+    padding: 20px 0;
     border-bottom: 1px solid var(--border);
 }
 
@@ -1774,23 +1702,36 @@ header {
     display: flex;
     align-items: center;
     gap: 16px;
+    min-width: 0;
+}
+
+.cart-item-remove {
+    display: flex;
+    justify-content: flex-end;
 }
 
 .remove-btn {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-full);
+    background: var(--rose-light);
     color: var(--muted);
-    font-size: 15px;
+    font-size: 13px;
     transition: var(--transition);
     cursor: pointer;
 }
 
 .remove-btn:hover {
-    color: var(--red);
-    transform: scale(1.15);
+    background: var(--red);
+    color: var(--white);
+    transform: scale(1.08);
 }
 
 .cart-item-thumb {
-    width: 70px;
-    height: 85px;
+    width: 72px;
+    height: 88px;
     border-radius: var(--radius-sm);
     overflow: hidden;
     background: var(--rose-light);
@@ -1807,6 +1748,7 @@ header {
     font-size: 14px;
     font-weight: 600;
     line-height: 1.4;
+    overflow-wrap: anywhere;
 }
 
 .cart-item-name a:hover {
@@ -1842,7 +1784,7 @@ header {
 
 .qty-btn-sm {
     width: 30px;
-    height: 32px;
+    height: 34px;
     display: grid;
     place-items: center;
     font-size: 14px;
@@ -1855,7 +1797,7 @@ header {
 }
 
 .qty-num {
-    width: 30px;
+    min-width: 28px;
     text-align: center;
     font-size: 13px;
     font-weight: 700;
@@ -1870,9 +1812,19 @@ header {
 
 .cart-actions-bottom {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
     align-items: center;
-    padding-top: 25px;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 26px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+}
+
+/* Buttons keep their natural width so neither one overpowers the other */
+.cart-actions-bottom .btn {
+    width: auto;
+    flex: 0 1 auto;
 }
 
 .summary-card {
@@ -1974,14 +1926,61 @@ header {
     line-height: 1.7;
 }
 
+/* Centred button row inside empty states */
+.empty-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 25px;
+}
+
 /* =========================================
-   16. CHECKOUT PAGE
+   15. CHECKOUT PAGE
    ========================================= */
+.alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 18px;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.alert i {
+    flex-shrink: 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.alert ul {
+    display: grid;
+    gap: 4px;
+    list-style: disc;
+    padding-left: 18px;
+}
+
+.alert-error {
+    background: #fff3f3;
+    border-color: #f2d0cd;
+    color: #a94442;
+}
+
 .checkout-grid {
     display: grid;
-    grid-template-columns: 1fr 380px;
+    /* minmax(0, …) stops a wide <select> / placeholder from stretching the
+       column past the viewport on small screens */
+    grid-template-columns: minmax(0, 1fr) 380px;
     gap: 40px;
     align-items: start;
+}
+
+.checkout-card,
+.checkout-summary-sidebar {
+    min-width: 0;
 }
 
 .checkout-card {
@@ -2202,13 +2201,32 @@ header {
 .review-item-row {
     display: flex;
     justify-content: space-between;
+    gap: 14px;
     font-size: 13px;
     padding: 6px 0;
     color: var(--text-light);
 }
 
+.review-item-row span {
+    min-width: 0;
+}
+
+.success-wa-block {
+    margin: 30px 0;
+}
+
+.success-wa-block .btn {
+    font-size: 15px;
+}
+
+.success-wa-block p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+}
+
 /* =========================================
-   17. WISHLIST TOOLBAR
+   16. WISHLIST TOOLBAR
    ========================================= */
 .wishlist-toolbar {
     display: flex;
@@ -2225,7 +2243,7 @@ header {
 }
 
 /* =========================================
-   18. FOOTER
+   17. FOOTER
    ========================================= */
 footer {
     background: var(--footer-bg);
@@ -2322,7 +2340,7 @@ footer h4 {
 }
 
 /* =========================================
-   19. FLASH MESSAGES & TOASTS
+   18. FLASH MESSAGES & TOASTS
    ========================================= */
 .toast-container {
     position: fixed;
@@ -2369,7 +2387,7 @@ footer h4 {
 }
 
 /* =========================================
-   20. WHATSAPP FLOATING BUTTON
+   19. WHATSAPP FLOATING BUTTON
    ========================================= */
 .whatsapp-float {
     position: fixed;

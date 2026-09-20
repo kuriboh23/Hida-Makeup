@@ -6,8 +6,9 @@
 
 require_once __DIR__ . '/includes/db.php';
 
-$cart_items = $_SESSION['cart'] ?? [];
-$subtotal = get_cart_subtotal();
+// Cart contents come from the signed cookie but are priced against the database.
+$cart_items = get_cart_items();
+$subtotal = get_cart_subtotal($cart_items);
 $shipping_fee = calculate_shipping($subtotal);
 $total = $subtotal + $shipping_fee;
 
@@ -107,13 +108,15 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['place_order']
                 'customer_phone' => $customer_phone,
                 'customer_city' => $customer_city,
                 'customer_address' => $customer_address,
-                'total' => $total,
+                'notes' => $notes,
+                'subtotal' => $subtotal,
                 'shipping_fee' => $shipping_fee,
+                'total' => $total,
                 'items' => $cart_items
             ];
 
-            // Clear session cart
-            $_SESSION['cart'] = [];
+            // Empty the browser cart now that the order is safely recorded
+            cart_clear();
 
         } catch (Exception $e) {
             $pdo->rollBack();
@@ -135,16 +138,23 @@ require_once __DIR__ . '/includes/header.php';
 ?>
 
 <!-- CHECKOUT HERO -->
-<section class="checkout-hero">
+<section class="page-hero">
     <div class="container">
-        <div class="breadcrumb">
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
             <a href="index.php">Accueil</a>
             <span>/</span>
             <a href="cart.php">Panier</a>
             <span>/</span>
-            <strong>Caisse</strong>
-        </div>
+            <strong><?= $order_placed ? "Commande confirmée" : "Caisse" ?></strong>
+        </nav>
+
         <h1><?= $order_placed ? "Commande Reçue !" : "Finaliser ma commande" ?></h1>
+
+        <p class="page-hero-desc">
+            <?= $order_placed
+                ? "Votre commande est enregistrée, il ne reste plus qu'à la confirmer sur WhatsApp."
+                : "Renseignez vos coordonnées de livraison — paiement en espèces à la réception." ?>
+        </p>
     </div>
 </section>
 
@@ -193,18 +203,9 @@ require_once __DIR__ . '/includes/header.php';
             </div>
 
             <!-- WhatsApp Direct Confirmation Button -->
-            <?php
-                $wa_url = whatsapp_order_url(
-                    $order_placed['order_number'],
-                    $order_placed['customer_name'],
-                    $order_placed['customer_phone'],
-                    $order_placed['customer_city'],
-                    $order_placed['total'],
-                    $order_placed['items']
-                );
-            ?>
-            <div style="margin: 30px 0;">
-                <a href="<?= htmlspecialchars($wa_url) ?>" target="_blank" class="btn btn-whatsapp btn-lg btn-block" style="font-size: 15px;">
+            <?php $wa_url = whatsapp_order_url($order_placed); ?>
+            <div class="success-wa-block">
+                <a href="<?= htmlspecialchars($wa_url) ?>" target="_blank" class="btn btn-whatsapp btn-lg btn-block">
                     <i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Confirmer ma commande par WhatsApp
                 </a>
                 <p style="font-size: 12px; color: var(--muted); margin-top: 10px;">
@@ -221,8 +222,9 @@ require_once __DIR__ . '/includes/header.php';
 
         <!-- CHECKOUT FORM & SUMMARY -->
         <?php if (!empty($errors)): ?>
-            <div class="alert alert-error" style="background:#fff3f3; color:#a94442; border-left:4px solid #d9534f; padding:15px; border-radius:6px; margin-bottom:25px;">
-                <ul style="margin-left: 20px; font-size: 13px; line-height: 1.6;">
+            <div class="alert alert-error" role="alert">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <ul>
                     <?php foreach ($errors as $err): ?>
                         <li><?= htmlspecialchars($err) ?></li>
                     <?php endforeach; ?>
@@ -358,50 +360,4 @@ require_once __DIR__ . '/includes/header.php';
     <?php endif; ?>
 </div>
 
-<?php
-$extra_css = '
-.checkout-hero { background: linear-gradient(135deg, var(--rose) 0%, #fef8f6 100%); padding: 35px 0; text-align: center; border-bottom: 1px solid var(--border); }
-.checkout-hero h1 { font-family: var(--font-heading); font-size: 32px; color: var(--burgundy-dark); margin-top: 6px; }
-
-.checkout-grid { display: grid; grid-template-columns: 1fr 380px; gap: 40px; align-items: start; }
-.checkout-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 32px; box-shadow: var(--shadow-sm); }
-.card-title { font-family: var(--font-heading); font-size: 20px; font-weight: 600; margin-bottom: 22px; padding-bottom: 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
-.card-title i { color: var(--burgundy); font-size: 18px; }
-
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-.form-group { display: flex; flex-direction: column; }
-.form-group.full { grid-column: 1 / -1; }
-.form-group label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
-
-.payment-method-box { background: var(--rose-light); border: 1px solid #ebd3cd; border-radius: var(--radius-sm); padding: 18px; }
-.payment-radio { display: flex; align-items: flex-start; gap: 12px; }
-.payment-radio input { accent-color: var(--burgundy); margin-top: 4px; width: 18px; height: 18px; }
-.payment-radio label strong { display: block; font-size: 14px; color: var(--text); }
-.payment-radio label span { display: block; font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.5; }
-
-.mini-cart-items { display: flex; flex-direction: column; gap: 14px; max-height: 280px; overflow-y: auto; padding-right: 5px; }
-.mini-item { display: flex; align-items: center; gap: 12px; }
-.mini-item img { width: 50px; height: 60px; border-radius: var(--radius-sm); object-fit: cover; background: var(--rose-light); flex-shrink: 0; }
-.mini-item-details { flex-grow: 1; min-width: 0; }
-.mini-item-details h4 { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.mini-item-meta { font-size: 11px; color: var(--muted); margin-top: 3px; }
-.mini-item-price { font-size: 13px; font-weight: 700; color: var(--burgundy); text-align: right; }
-
-.order-success-card { max-width: 650px; margin: 20px auto; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 50px 35px; text-align: center; box-shadow: var(--shadow-md); }
-.success-icon { width: 75px; height: 75px; border-radius: 50%; background: #eafaf1; color: var(--green); display: grid; place-items: center; font-size: 34px; margin: 0 auto 20px; }
-.order-success-card h2 { font-family: var(--font-heading); font-size: 26px; margin-bottom: 10px; }
-.success-subtitle { font-size: 15px; color: var(--muted); margin-bottom: 25px; }
-
-.order-summary-box { background: var(--bg-light); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px; text-align: left; }
-.order-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding-bottom: 16px; border-bottom: 1px solid var(--border); font-size: 13px; }
-.meta-label { color: var(--muted); display: block; font-size: 11px; text-transform: uppercase; margin-bottom: 2px; }
-.order-items-review { padding-top: 16px; }
-.review-item-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; color: var(--text-light); }
-
-@media (max-width: 992px) {
-    .checkout-grid { grid-template-columns: 1fr; }
-    .form-grid { grid-template-columns: 1fr; }
-}
-';
-
-require_once __DIR__ . '/includes/footer.php';
+<?php require_once __DIR__ . '/includes/footer.php';

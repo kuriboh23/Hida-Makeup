@@ -28,8 +28,14 @@ $sql = "
 $params = [];
 
 if ($search !== '') {
-    $sql .= " AND (p.name LIKE :search OR p.short_description LIKE :search OR c.name LIKE :search)";
-    $params[':search'] = '%' . $search . '%';
+    // One distinct placeholder per LIKE: MySQL native prepares (emulation is
+    // off) reject a named placeholder that is reused in the same statement.
+    $sql .= " AND (p.name LIKE :search_name OR p.short_description LIKE :search_desc OR c.name LIKE :search_cat)";
+
+    $term = '%' . $search . '%';
+    $params[':search_name'] = $term;
+    $params[':search_desc'] = $term;
+    $params[':search_cat']  = $term;
 }
 
 if ($selected_category !== '') {
@@ -93,28 +99,79 @@ if ($selected_category) {
     }
 }
 
-$page_title = $search ? "Recherche : " . htmlspecialchars($search) : "Boutique — " . $active_cat_name;
+// Page heading: an active search takes priority over the plain catalogue label
+$page_heading = $search ? 'Résultats de recherche' : $active_cat_name;
+
+// Filters carried over when a new search term is submitted, so searching never
+// silently drops what the visitor had already narrowed down.
+$preserved_filters = [];
+if ($selected_category !== '') {
+    $preserved_filters['category'] = $selected_category;
+}
+if ($filter_tag !== '') {
+    $preserved_filters['filter'] = $filter_tag;
+}
+if ($only_stock) {
+    $preserved_filters['in_stock'] = '1';
+}
+if ($max_price < 1000) {
+    $preserved_filters['max_price'] = (string)$max_price;
+}
+if ($sort !== 'featured') {
+    $preserved_filters['sort'] = $sort;
+}
+
+$page_title = $search ? 'Recherche : ' . $search : 'Boutique — ' . $active_cat_name;
 $page_description = "Découvrez notre collection complète de cosmétiques, maquillage et soins disponibles au Maroc.";
 
 require_once __DIR__ . '/includes/header.php';
 ?>
 
 <!-- PAGE HEADER & BREADCRUMB -->
-<section class="shop-header">
+<section class="page-hero">
     <div class="container">
-        <h1 class="page-title"><?= htmlspecialchars($active_cat_name) ?></h1>
-        <div class="breadcrumb">
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
             <a href="index.php">Accueil</a>
             <span>/</span>
             <a href="products.php">Boutique</a>
-            <?php if ($selected_category): ?>
-                <span>/</span>
-                <strong><?= htmlspecialchars($active_cat_name) ?></strong>
-            <?php elseif ($search): ?>
-                <span>/</span>
-                <strong>Recherche: "<?= htmlspecialchars($search) ?>"</strong>
+            <span>/</span>
+            <strong>
+                <?php if ($search): ?>
+                    Recherche
+                <?php else: ?>
+                    <?= htmlspecialchars($active_cat_name) ?>
+                <?php endif; ?>
+            </strong>
+        </nav>
+
+        <h1><?= htmlspecialchars($page_heading) ?></h1>
+
+        <p class="page-hero-desc">
+            <?php if ($search): ?>
+                Résultats pour « <?= htmlspecialchars($search) ?> » — <?= $total_products ?> <?= $total_products > 1 ? 'articles trouvés' : 'article trouvé' ?>.
+            <?php else: ?>
+                Maquillage, soins, parfums et essentiels beauté sélectionnés avec soin, livrés partout au Maroc.
             <?php endif; ?>
-        </div>
+        </p>
+
+        <!-- SHOP SEARCH BAR -->
+        <form class="shop-search" action="products.php" method="GET" role="search">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+
+            <input type="search" name="q" id="shopSearchInput"
+                   value="<?= htmlspecialchars($search) ?>"
+                   placeholder="Rechercher un rouge à lèvres, un fond de teint, un parfum..."
+                   aria-label="Rechercher un produit"
+                   autocomplete="off">
+
+            <?php foreach ($preserved_filters as $filter_name => $filter_value): ?>
+                <input type="hidden" name="<?= htmlspecialchars($filter_name) ?>" value="<?= htmlspecialchars($filter_value) ?>">
+            <?php endforeach; ?>
+
+            <button type="submit" class="shop-search-btn" aria-label="Lancer la recherche">
+                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            </button>
+        </form>
     </div>
 </section>
 
@@ -133,6 +190,14 @@ require_once __DIR__ . '/includes/header.php';
         <form action="products.php" method="GET" id="filterForm">
             <?php if ($search): ?>
                 <input type="hidden" name="q" value="<?= htmlspecialchars($search) ?>">
+            <?php endif; ?>
+
+            <?php // Keep the active sort order and "Nouveautés / Best-sellers" tag alive when a filter changes ?>
+            <?php if ($sort !== 'featured'): ?>
+                <input type="hidden" name="sort" value="<?= htmlspecialchars($sort) ?>">
+            <?php endif; ?>
+            <?php if ($filter_tag !== ''): ?>
+                <input type="hidden" name="filter" value="<?= htmlspecialchars($filter_tag) ?>">
             <?php endif; ?>
 
             <!-- Category Filter -->
@@ -213,7 +278,10 @@ require_once __DIR__ . '/includes/header.php';
         <?php if ($total_products > 0): ?>
             <div class="products-grid">
                 <?php foreach ($products as $product): ?>
-                    <?php $is_fav = is_in_wishlist($product['id']); ?>
+                    <?php
+                        $is_fav = is_in_wishlist($product['id']);
+                        $product_image = product_image_url($product['main_image'], (string)$product['slug'], (int)$product['id']);
+                    ?>
                     <article class="product-card">
                         <div class="product-img-wrap">
                             <?php if (!empty($product['badge'])): ?>
@@ -227,7 +295,7 @@ require_once __DIR__ . '/includes/header.php';
                             </button>
 
                             <a href="product.php?slug=<?= urlencode($product['slug']) ?>">
-                                <img src="<?= htmlspecialchars($product['main_image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" loading="lazy">
+                                <img src="<?= htmlspecialchars($product_image) ?>" alt="<?= htmlspecialchars($product['name']) ?>" loading="lazy">
                             </a>
                         </div>
 
@@ -255,7 +323,7 @@ require_once __DIR__ . '/includes/header.php';
                                     <?php endif; ?>
                                 </div>
 
-                                <a href="cart.php?action=add&id=<?= $product['id'] ?>" class="add-cart-btn" title="Ajouter au panier">
+                                <a href="cart.php?action=add&id=<?= $product['id'] ?>" class="add-cart-btn" data-id="<?= $product['id'] ?>" title="Ajouter au panier">
                                     <i class="fa-solid fa-bag-shopping"></i>
                                 </a>
                             </div>

@@ -1,0 +1,904 @@
+/* ==========================================================================
+   HIDA.MAKEUP - ADMIN STYLESHEET (mobile first)
+   Written phone-first: everything below this line is the phone layout.
+   Tablet / desktop adjustments live in the min-width queries at the bottom.
+   ========================================================================== */
+
+body.adm {
+    background: var(--bg-light);
+    /* room for the fixed bottom tab bar */
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+}
+
+/* =========================================
+   1. TOP BAR
+   ========================================= */
+.adm-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+}
+
+.adm-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--text);
+}
+
+.adm-brand span {
+    color: var(--burgundy);
+}
+
+.adm-brand small {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--burgundy);
+    background: var(--rose);
+    padding: 3px 6px;
+    border-radius: var(--radius-full);
+}
+
+.adm-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Section nav — phone: hidden (the tab bar does the job) */
+.adm-nav {
+    display: none;
+}
+
+/* =========================================
+   2. LAYOUT
+   ========================================= */
+.adm-main {
+    padding: 14px;
+    max-width: 1240px;
+    margin: 0 auto;
+}
+
+/* Title on the left, its main action on the right */
+.adm-head-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.adm-head-row .adm-page-sub {
+    margin-bottom: 0;
+}
+
+.adm-page-title {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    color: var(--burgundy-dark);
+    margin-bottom: 4px;
+}
+
+.adm-page-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.adm-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+}
+
+.adm-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+
+.adm-card-head h2 {
+    font-family: var(--font-heading);
+    font-size: 17px;
+    color: var(--text);
+}
+
+.adm-card-head p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 3px;
+    line-height: 1.5;
+}
+
+/* =========================================
+   3. STAT CARDS
+   ========================================= */
+.adm-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.adm-stat {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    box-shadow: var(--shadow-sm);
+}
+
+.adm-stat-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    background: var(--rose);
+    color: var(--burgundy);
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.adm-stat-icon.is-green { background: #eafaf1; color: var(--green); }
+.adm-stat-icon.is-amber { background: #fff8e1; color: #f57f17; }
+.adm-stat-icon.is-blue  { background: #e3f2fd; color: #1976d2; }
+
+.adm-stat-val {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+}
+
+.adm-stat-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 3px;
+}
+
+/* =========================================
+   4. TABLES -> STACKED CARDS ON PHONES
+   ========================================= */
+.adm-table-wrap {
+    margin: 0 -16px;
+}
+
+.adm-table,
+.adm-table tbody,
+.adm-table tr,
+.adm-table td {
+    display: block;
+    width: 100%;
+}
+
+.adm-table thead {
+    display: none;
+}
+
+.adm-table tr {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.adm-table tr:last-child {
+    border-bottom: none;
+}
+
+.adm-table td {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 5px 0;
+    font-size: 13px;
+    border: none;
+    text-align: right;
+}
+
+/* Every cell shows its column name, taken from the data-label attribute */
+.adm-table td::before {
+    content: attr(data-label);
+    flex: 0 0 40%;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-top: 2px;
+}
+
+/* Cells that should span the full width as their own block */
+.adm-table td.adm-cell-block {
+    display: block;
+    text-align: left;
+    margin-top: 8px;
+}
+
+.adm-table td.adm-cell-block::before {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.adm-table td.adm-cell-main {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    text-align: left;
+    padding-bottom: 10px;
+}
+
+.adm-table td.adm-cell-main::before {
+    display: none;
+}
+
+.adm-table td.adm-cell-actions {
+    display: flex;
+    justify-content: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-top: 12px;
+}
+
+.adm-table td.adm-cell-actions::before {
+    display: none;
+}
+
+.adm-row-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.adm-row-meta {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+}
+
+.adm-empty {
+    text-align: center;
+    padding: 34px 16px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.adm-empty i {
+    display: block;
+    font-size: 30px;
+    margin-bottom: 10px;
+    color: var(--border-dark);
+}
+
+/* =========================================
+   5. BADGES & THUMBS
+   ========================================= */
+.adm-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: var(--radius-full);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.adm-badge.is-pending   { background: #fff8e1; color: #f57f17; }
+.adm-badge.is-confirmed { background: #e3f2fd; color: #1976d2; }
+.adm-badge.is-shipped   { background: #f3e5f5; color: #7b1fa2; }
+.adm-badge.is-delivered { background: #e8f5e9; color: #2e7d32; }
+.adm-badge.is-cancelled { background: #ffebee; color: #c62828; }
+.adm-badge.is-local     { background: #e8f5e9; color: #2e7d32; }
+.adm-badge.is-external  { background: var(--rose); color: var(--burgundy); }
+.adm-badge.is-muted     { background: var(--bg-light); color: var(--muted); }
+
+.adm-thumb {
+    width: 56px;
+    height: 70px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+    background: var(--rose-light);
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.adm-thumb-lg {
+    width: 84px;
+    height: 105px;
+}
+
+/* =========================================
+   6. BUTTONS
+   ========================================= */
+.adm-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    /* 44px minimum: comfortable thumb target */
+    min-height: 44px;
+    padding: 11px 16px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-full);
+    background: var(--rose);
+    color: var(--burgundy);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+}
+
+.adm-btn:active {
+    transform: scale(0.98);
+}
+
+.adm-btn.is-primary {
+    background: var(--burgundy);
+    color: var(--white);
+}
+
+.adm-btn.is-outline {
+    background: var(--white);
+    border-color: var(--border-dark);
+    color: var(--text);
+}
+
+.adm-btn.is-ghost {
+    background: transparent;
+    color: var(--muted);
+}
+
+.adm-btn.is-danger {
+    background: #ffebee;
+    color: var(--red);
+}
+
+.adm-btn.is-small {
+    min-height: 38px;
+    padding: 8px 13px;
+    font-size: 10.5px;
+}
+
+.adm-btn.is-icon {
+    min-height: 42px;
+    width: 42px;
+    padding: 0;
+}
+
+.adm-btn.is-block {
+    display: flex;
+    width: 100%;
+}
+
+.adm-actions-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* =========================================
+   7. FORMS
+   ========================================= */
+.adm-field {
+    margin-bottom: 14px;
+}
+
+.adm-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+
+.adm-field .adm-hint {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 5px;
+    line-height: 1.45;
+}
+
+.adm-input,
+.adm-select,
+.adm-textarea {
+    width: 100%;
+    min-width: 0;
+    min-height: 46px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    color: var(--text);
+    /* 16px stops iOS Safari zooming in when a field is focused */
+    font-size: 16px;
+    font-family: inherit;
+    outline: none;
+    transition: var(--transition);
+}
+
+.adm-textarea {
+    min-height: 110px;
+    line-height: 1.6;
+    resize: vertical;
+}
+
+.adm-input:focus,
+.adm-select:focus,
+.adm-textarea:focus {
+    border-color: var(--burgundy);
+    box-shadow: 0 0 0 3px rgba(125, 54, 56, 0.12);
+}
+
+.adm-input[type="file"] {
+    padding: 10px;
+    font-size: 13px;
+}
+
+.adm-input[type="file"]::file-selector-button {
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 9px 12px;
+    margin-right: 10px;
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius-sm);
+    background: var(--bg-light);
+    color: var(--text);
+    cursor: pointer;
+}
+
+.adm-switch {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    min-height: 52px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    cursor: pointer;
+}
+
+.adm-switch-text strong {
+    display: block;
+    font-size: 13px;
+}
+
+.adm-switch-text span {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+    line-height: 1.4;
+}
+
+.adm-switch input {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    accent-color: var(--burgundy);
+}
+
+.adm-field-row {
+    display: grid;
+    gap: 14px;
+}
+
+/* Filter bar above a list: one column on a phone, four from tablet up */
+.adm-filters {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+
+.adm-filters .adm-actions-row {
+    grid-column: 1 / -1;
+}
+
+/* Field with an icon sitting inside it */
+.adm-input-icon {
+    position: relative;
+    display: block;
+}
+
+.adm-input-icon > i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    color: var(--muted);
+    pointer-events: none;
+}
+
+.adm-input-icon .adm-input {
+    padding-left: 38px;
+}
+
+/* Hide Safari's own clear button so the magnifier stays in place */
+.adm-input-icon .adm-input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+}
+
+/* Sticky save bar, sits just above the tab bar on phones */
+.adm-savebar {
+    position: sticky;
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    z-index: 500;
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    margin-top: 6px;
+}
+
+.adm-savebar .adm-btn {
+    flex: 1;
+}
+
+/* =========================================
+   8. FLASH MESSAGES
+   ========================================= */
+.adm-flash {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px 15px;
+    border-radius: var(--radius-sm);
+    border-left: 4px solid;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+.adm-flash.is-success { background: #eafaf1; border-color: #2e7d32; color: #1b5e20; }
+.adm-flash.is-error   { background: #ffebee; border-color: #c62828; color: #b71c1c; }
+.adm-flash.is-info    { background: #fff8e1; border-color: #f57f17; color: #e65100; }
+
+/* =========================================
+   9. PHOTO MANAGER
+   ========================================= */
+.adm-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.adm-photo-slot {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    background: var(--white);
+}
+
+.adm-photo-slot.is-empty {
+    border-style: dashed;
+    background: var(--bg-light);
+}
+
+.adm-photo-slot-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.adm-photo-slot-head strong {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.adm-photo-preview {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    background: var(--rose-light);
+    border: 1px solid var(--border);
+    margin-bottom: 10px;
+}
+
+.adm-photo-remove {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: inherit;
+    font-size: 11px;
+    color: var(--red);
+    cursor: pointer;
+}
+
+.adm-photo-remove:hover {
+    text-decoration: underline;
+}
+
+/* =========================================
+   10. BOTTOM TAB BAR (phones only)
+   ========================================= */
+.adm-tabbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.adm-tabbar a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    /* comfortable thumb height */
+    min-height: 62px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.adm-tabbar a i {
+    font-size: 17px;
+}
+
+.adm-tabbar a.active {
+    color: var(--burgundy);
+    background: var(--rose-light);
+}
+
+.adm-tabbar a:active {
+    background: var(--rose);
+}
+
+/* =========================================
+   11. TABLET & DESKTOP
+   ========================================= */
+@media (min-width: 700px) {
+    body.adm {
+        padding-bottom: 0;
+    }
+
+    .adm-tabbar {
+        display: none;
+    }
+
+    .adm-main {
+        padding: 22px 20px 40px;
+    }
+
+    .adm-nav {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        order: 2;
+    }
+
+    .adm-nav a {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 9px 14px;
+        border-radius: var(--radius-full);
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--text-light);
+    }
+
+    .adm-nav a:hover {
+        background: var(--bg-light);
+        color: var(--burgundy);
+    }
+
+    .adm-nav a.active {
+        background: var(--rose);
+        color: var(--burgundy);
+    }
+
+    .adm-topbar {
+        padding: 12px 20px;
+    }
+
+    .adm-topbar-actions {
+        order: 3;
+    }
+
+    .adm-stats {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+    }
+
+    .adm-page-title {
+        font-size: 26px;
+    }
+
+    /* Real tables from tablet up */
+    .adm-table-wrap {
+        margin: 0;
+        overflow-x: auto;
+    }
+
+    .adm-table {
+        display: table;
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        text-align: left;
+    }
+
+    .adm-table thead {
+        display: table-header-group;
+    }
+
+    .adm-table tbody {
+        display: table-row-group;
+    }
+
+    .adm-table tr {
+        display: table-row;
+        padding: 0;
+        border: none;
+    }
+
+    .adm-table th {
+        display: table-cell;
+        padding: 11px 12px;
+        background: var(--bg-light);
+        color: var(--muted);
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+    }
+
+    .adm-table td {
+        display: table-cell;
+        padding: 12px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: middle;
+        text-align: left;
+    }
+
+    .adm-table td::before {
+        display: none;
+    }
+
+    .adm-table td.adm-cell-main,
+    .adm-table td.adm-cell-block,
+    .adm-table td.adm-cell-actions {
+        display: table-cell;
+        text-align: left;
+        margin-top: 0;
+        padding-top: 12px;
+    }
+
+    .adm-table td.adm-cell-main {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .adm-table td.adm-cell-actions {
+        display: table-cell;
+        white-space: nowrap;
+    }
+
+    .adm-table td.adm-cell-actions .adm-actions-row {
+        flex-wrap: nowrap;
+    }
+
+    .adm-field-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .adm-field-row.is-three {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .adm-photo-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .adm-filters {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .adm-savebar {
+        position: static;
+        justify-content: flex-end;
+        padding: 0;
+        margin-top: 18px;
+    }
+
+    .adm-savebar .adm-btn {
+        flex: 0 0 auto;
+        min-width: 190px;
+    }
+
+    .adm-card {
+        padding: 22px;
+    }
+
+    .adm-table-wrap {
+        margin: 0 -22px;
+    }
+}
+
+@media (min-width: 1100px) {
+    .adm-main {
+        padding: 28px 24px 48px;
+    }
+}
+
+/* Keep the admin usable on a phone in landscape too */
+@media (max-width: 380px) {
+    .adm-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .adm-photo-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .adm-head-row .adm-btn {
+        width: 100%;
+    }
+
+    .adm-tabbar a {
+        font-size: 9px;
+    }
+}

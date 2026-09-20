@@ -109,3 +109,6 @@ try {
     <?php
     exit;
 }
+
+// Cart & favorites layer: cookie based, priced against the products table.
+require_once __DIR__ . '/store.php';

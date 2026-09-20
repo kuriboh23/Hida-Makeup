@@ -3,6 +3,7 @@
  * HIDA.MAKEUP - Global Reusable Header
  */
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/store.php';
 
 // Detect active page for navigation highlight
 $current_page = basename($_SERVER['PHP_SELF']);
@@ -50,7 +51,6 @@ $flash = get_flash();
             <nav class="nav">
                 <a href="<?= BASE_PATH ?>index.php" class="<?= $current_page === 'index.php' ? 'active' : '' ?>">Accueil</a>
                 <a href="<?= BASE_PATH ?>products.php" class="<?= $current_page === 'products.php' ? 'active' : '' ?>">Boutique</a>
-                <a href="<?= BASE_PATH ?>category.php" class="<?= $current_page === 'category.php' ? 'active' : '' ?>">Catégories</a>
                 <a href="<?= BASE_PATH ?>index.php#about">À propos</a>
                 <a href="<?= BASE_PATH ?>index.php#contact">Contact</a>
             </nav>
@@ -91,7 +91,6 @@ $flash = get_flash();
             <nav class="mobile-links">
                 <a href="<?= BASE_PATH ?>index.php">Accueil <i class="fa-solid fa-angle-right" style="font-size:14px;color:var(--muted)"></i></a>
                 <a href="<?= BASE_PATH ?>products.php">Boutique <i class="fa-solid fa-angle-right" style="font-size:14px;color:var(--muted)"></i></a>
-                <a href="<?= BASE_PATH ?>category.php">Catégories <i class="fa-solid fa-angle-right" style="font-size:14px;color:var(--muted)"></i></a>
                 <a href="<?= BASE_PATH ?>favorites.php">Mes favoris (<?= $wishlist_count ?>) <i class="fa-solid fa-angle-right" style="font-size:14px;color:var(--muted)"></i></a>
                 <a href="<?= BASE_PATH ?>cart.php">Mon Panier (<?= $cart_count ?>) <i class="fa-solid fa-angle-right" style="font-size:14px;color:var(--muted)"></i></a>
                 <a href="<?= BASE_PATH ?>index.php#about" onclick="closeMenu()">À propos <i class="fa-solid fa-angle-right" style="font-size:14px;color:var(--muted)"></i></a>

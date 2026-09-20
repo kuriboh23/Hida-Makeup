@@ -36,17 +36,8 @@ if (!$product) {
     exit;
 }
 
-// Parse gallery images
-$gallery = [];
-if (!empty($product['gallery_images'])) {
-    $decoded = json_decode($product['gallery_images'], true);
-    if (is_array($decoded)) {
-        $gallery = $decoded;
-    }
-}
-if (empty($gallery)) {
-    $gallery = [$product['main_image']];
-}
+// Gallery: local photos in assets/images/products/ win, then the stored URLs
+$gallery = product_gallery_urls($product);
 
 // Fetch related products in the same category
 $rel_stmt = $pdo->prepare("
@@ -78,15 +69,17 @@ require_once __DIR__ . '/includes/header.php';
 ?>
 
 <!-- BREADCRUMB -->
-<div class="breadcrumb-bar">
-    <div class="container breadcrumb">
-        <a href="index.php">Accueil</a>
-        <span>/</span>
-        <a href="products.php">Boutique</a>
-        <span>/</span>
-        <a href="category.php?slug=<?= urlencode($product['category_slug']) ?>"><?= htmlspecialchars($product['category_name']) ?></a>
-        <span>/</span>
-        <strong><?= htmlspecialchars($product['name']) ?></strong>
+<div class="page-hero breadcrumb-only">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Fil d'Ariane">
+            <a href="index.php">Accueil</a>
+            <span>/</span>
+            <a href="products.php">Boutique</a>
+            <span>/</span>
+            <a href="products.php?category=<?= urlencode($product['category_slug']) ?>"><?= htmlspecialchars($product['category_name']) ?></a>
+            <span>/</span>
+            <strong><?= htmlspecialchars($product['name']) ?></strong>
+        </nav>
     </div>
 </div>
 
@@ -251,7 +244,7 @@ require_once __DIR__ . '/includes/header.php';
                 <span class="section-tag">COMPLÉTEZ VOTRE ROUTINE</span>
                 <h2 class="section-title">Produits similaires</h2>
             </div>
-            <a href="category.php?slug=<?= urlencode($product['category_slug']) ?>" class="see-all">
+            <a href="products.php?category=<?= urlencode($product['category_slug']) ?>" class="see-all">
                 Voir plus dans <?= htmlspecialchars($product['category_name']) ?> <i class="fa-solid fa-arrow-right"></i>
             </a>
         </div>
@@ -270,7 +263,7 @@ require_once __DIR__ . '/includes/header.php';
                         </button>
 
                         <a href="product.php?slug=<?= urlencode($rel['slug']) ?>">
-                            <img src="<?= htmlspecialchars($rel['main_image']) ?>" alt="<?= htmlspecialchars($rel['name']) ?>" loading="lazy">
+                            <img src="<?= htmlspecialchars(product_image_url($rel['main_image'], (string)$rel['slug'], (int)$rel['id'])) ?>" alt="<?= htmlspecialchars($rel['name']) ?>" loading="lazy">
                         </a>
                     </div>
 
@@ -290,7 +283,7 @@ require_once __DIR__ . '/includes/header.php';
                                 <?php endif; ?>
                             </div>
 
-                            <a href="cart.php?action=add&id=<?= $rel['id'] ?>" class="add-cart-btn" title="Ajouter au panier">
+                            <a href="cart.php?action=add&id=<?= $rel['id'] ?>" class="add-cart-btn" data-id="<?= $rel['id'] ?>" title="Ajouter au panier">
                                 <i class="fa-solid fa-bag-shopping"></i>
                             </a>
                         </div>

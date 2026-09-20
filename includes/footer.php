@@ -34,11 +34,12 @@ require_once __DIR__ . '/config.php';
                     <h4>Boutique</h4>
                     <div class="footer-links">
                         <a href="<?= BASE_PATH ?>products.php">Tous les produits</a>
-                        <a href="<?= BASE_PATH ?>category.php?slug=levres">Lèvres & Gloss</a>
-                        <a href="<?= BASE_PATH ?>category.php?slug=teint">Teint & Fonds de teint</a>
-                        <a href="<?= BASE_PATH ?>category.php?slug=soins">Soins du Visage</a>
-                        <a href="<?= BASE_PATH ?>category.php?slug=yeux">Maquillage des Yeux</a>
-                        <a href="<?= BASE_PATH ?>category.php?slug=parfums">Parfums & Brumes</a>
+                        <a href="<?= BASE_PATH ?>products.php?category=levres">Lèvres & Gloss</a>
+                        <a href="<?= BASE_PATH ?>products.php?category=teint">Teint & Fonds de teint</a>
+                        <a href="<?= BASE_PATH ?>products.php?category=soins">Soins du Visage</a>
+                        <a href="<?= BASE_PATH ?>products.php?category=yeux">Maquillage des Yeux</a>
+                        <a href="<?= BASE_PATH ?>products.php?category=parfums">Parfums & Brumes</a>
+                        <a href="<?= BASE_PATH ?>products.php?category=accessoires">Pinceaux & Accessoires</a>
                     </div>
                 </div>
 
@@ -75,6 +76,7 @@ require_once __DIR__ . '/config.php';
     </footer>
 
     <!-- MAIN JAVASCRIPT -->
+    <script>window.HIDA_BASE = <?= json_encode(BASE_PATH) ?>;</script>
     <script src="<?= BASE_PATH ?>assets/js/main.js"></script>
     <?php if (isset($extra_js)): ?>
         <script><?= $extra_js ?></script>

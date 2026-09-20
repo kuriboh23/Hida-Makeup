@@ -7,19 +7,13 @@
  */
 
 // 1. Session initialization
+// Sessions are only used for the small "flash" notices (added to cart, etc.).
+// The cart and the favorites list live in cookies - see includes/store.php.
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 2. Initialize cart and wishlist session storage if not present
-if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
-}
-if (!isset($_SESSION['favorites'])) {
-    $_SESSION['favorites'] = [];
-}
-
-// 3. Brand & Store Information
+// 2. Brand & Store Information
 define('SITE_NAME', 'HIDA.MAKEUP');
 define('SITE_LOGO_PREFIX', 'HIDA');
 define('SITE_LOGO_SUFFIX', '.MAKEUP');
@@ -27,7 +21,7 @@ define('SITE_TAGLINE', 'Makeup & Cosmetics au Maroc');
 define('SITE_DESCRIPTION', 'Votre destination beauté au Maroc. Découvrez notre sélection exclusive de maquillage, skincare, parfums et soins authentiques.');
 define('SITE_FOOTER_ABOUT', 'Votre destination beauté au Maroc. Maquillage, skincare, parfums et essentiels sélectionnés pour vous avec amour.');
 
-// 4. Contact & Location
+// 3. Contact & Location
 define('STORE_PHONE', '+212 620 28 37 25');
 define('STORE_WHATSAPP', '212620283725');
 define('STORE_WHATSAPP_LINK', 'https://wa.me/212620283725');
@@ -36,22 +30,27 @@ define('STORE_CITY', 'Mohammedia');
 define('STORE_ADDRESS', 'Mohammedia, Maroc');
 define('STORE_HOURS', 'WhatsApp disponible 7j/7');
 
-// 5. Social Links
+// 4. Social Links
 define('SOCIAL_INSTAGRAM', 'https://instagram.com/hida.makeup');
 define('SOCIAL_FACEBOOK', 'https://facebook.com/hida.makeup');
 define('SOCIAL_TIKTOK', 'https://tiktok.com/@hida.makeup');
 
-// 6. Top Announcement Bar
+// 5. Top Announcement Bar
 define('TOPBAR_ENABLED', true);
 define('TOPBAR_TEXT', 'LIVRAISON PARTOUT AU MAROC | PAIEMENT À LA LIVRAISON');
 
-// 7. E-Commerce & Currency Settings
+// 6. E-Commerce & Currency Settings
 define('CURRENCY_SYMBOL', 'DH');
 define('CURRENCY_POSITION', 'after'); // 'after' => 250 DH, 'before' => DH 250
 define('DEFAULT_SHIPPING_FEE', 35.00);
 define('FREE_SHIPPING_THRESHOLD', 350.00); // Free shipping if cart >= 350 DH
 
-// 8. Database Credentials
+// Secret used to sign the cart / favorites cookies. Replace it with your own
+// long random string before going live: it is what stops a visitor from
+// forging the contents of their basket.
+define('STORE_COOKIE_SECRET', 'change-me-to-a-long-random-string');
+
+// 7. Database Credentials
 define('DB_HOST', '127.0.0.1');
 define('DB_PORT', '3306');
 define('DB_NAME', 'hida_makeup');
@@ -59,7 +58,7 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');
 
-// 9. Base URL & Path helpers (dynamically handles root or subfolders in htdocs)
+// 8. Base URL & Path helpers (dynamically handles root or subfolders in htdocs)
 $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? ''));
 $rootSubfolder = preg_replace('#/(includes|admin).*$#', '', $scriptDir);
 $cleanSub = trim($rootSubfolder, '/');
@@ -69,7 +68,8 @@ $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || (isset(
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 define('BASE_URL', rtrim($protocol . $host, '/') . BASE_PATH);
 
-// 10. Global Helper Functions
+// 9. Global Helper Functions
+// Cart & favorites helpers live in includes/store.php (cookie based storage).
 
 /**
  * Format price with currency symbol
@@ -91,34 +91,6 @@ function sanitize(mixed $data): string {
 }
 
 /**
- * Get total number of items in cart
- */
-function get_cart_count(): int {
-    $count = 0;
-    if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
-        foreach ($_SESSION['cart'] as $item) {
-            $count += isset($item['quantity']) ? (int)$item['quantity'] : 1;
-        }
-    }
-    return $count;
-}
-
-/**
- * Get cart subtotal amount
- */
-function get_cart_subtotal(): float {
-    $subtotal = 0.0;
-    if (!empty($_SESSION['cart']) && is_array($_SESSION['cart'])) {
-        foreach ($_SESSION['cart'] as $item) {
-            $price = (float)($item['price'] ?? 0);
-            $qty = (int)($item['quantity'] ?? 1);
-            $subtotal += ($price * $qty);
-        }
-    }
-    return $subtotal;
-}
-
-/**
  * Calculate shipping fee based on threshold
  */
 function calculate_shipping(float $subtotal): float {
@@ -132,51 +104,72 @@ function calculate_shipping(float $subtotal): float {
 }
 
 /**
- * Get total number of favorite items
+ * Build the WhatsApp confirmation link for a placed order.
+ *
+ * @param array $order  Expects: order_number, customer_name, customer_phone,
+ *                      customer_city, customer_address, notes, subtotal,
+ *                      shipping_fee, total and items.
  */
-function get_wishlist_count(): int {
-    return !empty($_SESSION['favorites']) && is_array($_SESSION['favorites']) ? count($_SESSION['favorites']) : 0;
-}
+function whatsapp_order_url(array $order): string {
+    $items    = is_array($order['items'] ?? null) ? $order['items'] : [];
+    $shipping = (float)($order['shipping_fee'] ?? 0);
 
-/**
- * Check if a product is in wishlist
- */
-function is_in_wishlist(int $product_id): bool {
-    return !empty($_SESSION['favorites']) && in_array($product_id, $_SESSION['favorites'], true);
-}
-
-/**
- * Generate a direct WhatsApp order link
- */
-function whatsapp_order_url(string $order_number, string $customer_name, string $phone, string $city, float $total, array $items = []): string {
     $lines = [];
-    $lines[] = "Bonjour *" . SITE_NAME . "* !";
-    $lines[] = "Je souhaite confirmer ma commande *" . $order_number . "* :";
-    $lines[] = "👤 *Nom :* " . $customer_name;
-    $lines[] = "📞 *Tél :* " . $phone;
-    $lines[] = "📍 *Ville :* " . $city;
-    if (!empty($items)) {
-        $lines[] = "🛍️ *Articles :*";
-        foreach ($items as $it) {
-            $lines[] = "- " . ($it['name'] ?? 'Article') . " x" . ($it['quantity'] ?? 1) . " (" . format_price($it['price'] ?? 0) . ")";
+    $lines[] = 'Bonjour *' . SITE_NAME . '* 👋';
+    $lines[] = '';
+    $lines[] = 'Je confirme ma commande *' . ($order['order_number'] ?? '') . '*';
+    $lines[] = '';
+
+    if ($items) {
+        $lines[] = '🛍️ *Articles commandés*';
+        foreach ($items as $item) {
+            $qty        = (int)($item['quantity'] ?? 1);
+            $line_total = (float)($item['price'] ?? 0) * $qty;
+            $lines[]    = '• ' . ($item['name'] ?? 'Article') . ' × ' . $qty . ' — ' . format_price($line_total);
         }
+        $lines[] = '';
     }
-    $lines[] = "💰 *Total :* " . format_price($total);
-    $lines[] = "Merci de me confirmer la livraison !";
+
+    $lines[] = '💵 *Sous-total :* ' . format_price($order['subtotal'] ?? 0);
+    $lines[] = '🚚 *Livraison :* ' . ($shipping > 0 ? format_price($shipping) : 'Offerte');
+    $lines[] = '✅ *Total à payer :* ' . format_price($order['total'] ?? 0);
+    $lines[] = '';
+    $lines[] = '👤 *Nom :* ' . ($order['customer_name'] ?? '');
+    $lines[] = '📞 *Téléphone :* ' . ($order['customer_phone'] ?? '');
+    $lines[] = '📍 *Ville :* ' . ($order['customer_city'] ?? '');
+
+    if (!empty($order['customer_address'])) {
+        $lines[] = '🏠 *Adresse :* ' . $order['customer_address'];
+    }
+    if (!empty($order['notes'])) {
+        $lines[] = '📝 *Note :* ' . $order['notes'];
+    }
+
+    $lines[] = '';
+    $lines[] = '💳 Paiement en espèces à la livraison.';
+    $lines[] = 'Merci de me confirmer la livraison !';
 
     $message = implode("\n", $lines);
-    return "https://wa.me/" . STORE_WHATSAPP . "?text=" . urlencode($message);
+    return 'https://wa.me/' . STORE_WHATSAPP . '?text=' . urlencode($message);
 }
 
 /**
  * Generate a WhatsApp inquiry link for a single product
  */
 function whatsapp_product_url(string $product_name, float $price, string $url = ''): string {
-    $msg = "Bonjour *" . SITE_NAME . "* ! Je suis intéressé(e) par votre produit : *" . $product_name . "* (" . format_price($price) . "). Est-il disponible ?";
+    $lines = [];
+    $lines[] = 'Bonjour *' . SITE_NAME . '* 👋';
+    $lines[] = 'Je suis intéressé(e) par ce produit :';
+    $lines[] = '';
+    $lines[] = '🛍️ *' . $product_name . '*';
+    $lines[] = '💰 *Prix :* ' . format_price($price);
     if ($url) {
-        $msg .= "\nLien : " . $url;
+        $lines[] = '🔗 ' . $url;
     }
-    return "https://wa.me/" . STORE_WHATSAPP . "?text=" . urlencode($msg);
+    $lines[] = '';
+    $lines[] = 'Est-il disponible ? Merci !';
+
+    return 'https://wa.me/' . STORE_WHATSAPP . '?text=' . urlencode(implode("\n", $lines));
 }
 
 /**
