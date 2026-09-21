@@ -222,11 +222,11 @@ require_once __DIR__ . '/includes/header.php';
                 <div class="filter-title">Prix Maximum</div>
                 <div style="padding: 0 5px;">
                     <input type="range" name="max_price" min="50" max="600" step="25" value="<?= $max_price ?>" 
-                           oninput="document.getElementById('priceVal').textContent = this.value + ' <?= CURRENCY_SYMBOL ?>'"
+                           oninput="document.getElementById('priceVal').textContent = this.value + ' <?= HIDA_CURRENCY_SYMBOL ?>'"
                            onchange="this.form.submit()" style="width: 100%; accent-color: var(--burgundy);">
                     <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-top:8px;">
-                        <span>0 <?= CURRENCY_SYMBOL ?></span>
-                        <strong id="priceVal" style="color:var(--burgundy); font-weight:700;"><?= $max_price ?> <?= CURRENCY_SYMBOL ?></strong>
+                        <span>0 <?= HIDA_CURRENCY_SYMBOL ?></span>
+                        <strong id="priceVal" style="color:var(--burgundy); font-weight:700;"><?= $max_price ?> <?= HIDA_CURRENCY_SYMBOL ?></strong>
                     </div>
                 </div>
             </div>

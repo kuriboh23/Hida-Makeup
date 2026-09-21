@@ -167,7 +167,7 @@ require_once __DIR__ . '/includes/header.php';
     <section class="section routine">
         <div class="container routine-grid">
             <div class="routine-image">
-                <img src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=900&q=80"
+                <img src="./assets/images/hero.jpg"
                      alt="Routine Beauté HIDA" loading="lazy">
             </div>
             <div class="routine-content">
